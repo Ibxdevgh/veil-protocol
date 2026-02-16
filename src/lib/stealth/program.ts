@@ -45,12 +45,9 @@ export async function buildShieldTransferInstruction(
   const tx = new Transaction();
   tx.add(transferIx);
 
-  // Only add the memo ix if we're on devnet (the program may not be deployed there)
-  // On mainnet, include the stealth program reference
-  const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK;
-  if (network === "mainnet-beta") {
-    tx.add(veilMemoIx);
-  }
+  // Stealth program CPI is not yet deployed on-chain —
+  // the privacy layer (proof generation + selective disclosure) runs client-side.
+  // veilMemoIx will be enabled once the program is live.
 
   const { blockhash } = await connection.getLatestBlockhash();
   tx.recentBlockhash = blockhash;
