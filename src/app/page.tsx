@@ -114,6 +114,8 @@ export default function LandingPage() {
               box-shadow: 0 0 24px rgba(16, 185, 129, 0.12);
             }
             .btn-nav { font-size: 0.75rem; padding: 10px 20px; }
+            .nav-links a.btn-primary { color: #050505; }
+            .nav-links a.btn-primary:hover { color: #050505; }
 
             /* Hero */
             .hero {
