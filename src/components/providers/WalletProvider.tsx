@@ -44,7 +44,7 @@ export const WalletProvider: FC<Props> = ({ children }) => {
   return (
     <ConnectionProvider
       endpoint={endpoint}
-      config={{ commitment: "confirmed", wsEndpoint: false as unknown as string }}
+      config={{ commitment: "confirmed" }}
     >
       <SolanaWalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>{children}</WalletModalProvider>
