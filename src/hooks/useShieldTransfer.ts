@@ -8,7 +8,7 @@ import { ComplianceProof } from "@/types/proof";
 import { buildShieldTransferInstruction } from "@/lib/stealth/program";
 import { generateComplianceProof } from "@/lib/zk/proof";
 import { saveTransaction } from "@/lib/storage/transactions";
-import { generateId } from "@/lib/utils";
+import { generateId, sleep } from "@/lib/utils";
 import { SOLANA_NETWORK } from "@/lib/constants";
 
 interface TransferParams {
@@ -78,8 +78,19 @@ export function useShieldTransfer() {
         const signature = await sendTransaction(transaction, connection);
         tx.signature = signature;
 
-        // Step 3: Confirm
-        await connection.confirmTransaction(signature, "confirmed");
+        // Step 3: Confirm via polling (no WebSocket needed)
+        for (let i = 0; i < 30; i++) {
+          const { value } = await connection.getSignatureStatuses([signature]);
+          const status = value?.[0];
+          if (status?.confirmationStatus === "confirmed" || status?.confirmationStatus === "finalized") {
+            break;
+          }
+          if (status?.err) {
+            throw new Error("Transaction failed on-chain");
+          }
+          await sleep(2000);
+          if (i === 29) throw new Error("Transaction confirmation timed out");
+        }
 
         // Step 4: Generate compliance proof
         setStatus("proving");
