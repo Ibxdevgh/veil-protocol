@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useEffect, useMemo, useState } from "react";
+import { FC, ReactNode, useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider as SolanaWalletProvider,
@@ -18,12 +18,6 @@ interface Props {
 }
 
 export const WalletProvider: FC<Props> = ({ children }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const endpoint = useMemo(() => {
     if (typeof window !== "undefined") {
       return `${window.location.origin}/api/rpc`;
@@ -35,11 +29,6 @@ export const WalletProvider: FC<Props> = ({ children }) => {
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     []
   );
-
-  // During SSR, render children without wallet providers
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <ConnectionProvider
