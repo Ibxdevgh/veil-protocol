@@ -8,8 +8,6 @@ export const STEALTH_PROGRAM_ID = new PublicKey(
 export const SOLANA_NETWORK =
   process.env.NEXT_PUBLIC_SOLANA_NETWORK || "mainnet-beta";
 
-export const RPC_URL =
-  process.env.NEXT_PUBLIC_RPC_URL || "https://api.mainnet-beta.solana.com";
 
 export const STORAGE_KEYS = {
   TRANSACTIONS: "veil_transactions",

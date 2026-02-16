@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useMemo } from "react";
+import { FC, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   ConnectionProvider,
   WalletProvider as SolanaWalletProvider,
@@ -10,7 +10,6 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
-import { RPC_URL } from "@/lib/constants";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -19,12 +18,28 @@ interface Props {
 }
 
 export const WalletProvider: FC<Props> = ({ children }) => {
-  const endpoint = useMemo(() => RPC_URL, []);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const endpoint = useMemo(() => {
+    if (typeof window !== "undefined") {
+      return `${window.location.origin}/api/rpc`;
+    }
+    return "https://api.mainnet-beta.solana.com";
+  }, []);
 
   const wallets = useMemo(
     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     []
   );
+
+  // During SSR, render children without wallet providers
+  if (!mounted) {
+    return <>{children}</>;
+  }
 
   return (
     <ConnectionProvider
